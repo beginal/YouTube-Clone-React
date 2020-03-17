@@ -19,7 +19,7 @@ const CategoryList = [
   { value: 4, label: "Sports" }
 ]
 
-function VideoUploadPage() {
+function VideoUploadPage(props) {
   const user = useSelector(state => state.user)
   const [VideoTitle, setVideoTitle] = useState("")
   const [Description, setDescription] = useState("")
@@ -45,6 +45,12 @@ function VideoUploadPage() {
   const onSubmit = (e) => {
     e.preventDefault();
 
+    if (VideoTitle === "" || Description === "" ||
+    Category === "" || FilePath === "" ||
+    Duration === "" || ThumbnailPath === "") {
+    return alert('Please first fill all the fields')
+    }
+
     const variables = {
       writer: user.userData._id,
       title: VideoTitle,
@@ -59,7 +65,9 @@ function VideoUploadPage() {
     Axios.post('/api/video/uploadVideo', variables)
     .then(response => {
       if(response.data.success) {
+        alert('업로드 성공')
         console.log(response.data)
+        props.history.push('/')
       } else {
         console.log(response.data)
         alert('비디오 업로드에 실패했습니다.')
@@ -68,7 +76,7 @@ function VideoUploadPage() {
   }
 
   const onDrop = (files) => {
-    let formData = new FormData;
+    let formData = new FormData();
     const config = {
       header: {'content=type': 'multipart/form-data'}
     }
